@@ -1,0 +1,8 @@
+# Build directory
+build/
+
+# Dependencies
+dependencies/
+
+# OS specific
+.DS_Store
