@@ -4,7 +4,7 @@
       "name": "Mac",
       "includePath": [
         "${workspaceFolder}/**",
-        "${workspaceFolder}/dependencies/glfw-3.4.bin.MACOS/include"
+        "/opt/homebrew/include"
       ],
       "intelliSenseMode": "macos-clang-arm64",
       "compilerPath": "/usr/bin/clang++",

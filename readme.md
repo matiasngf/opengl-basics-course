@@ -5,8 +5,10 @@ This repository contains experiments made while following the course [OpenGL - T
 
 ### Installation
 
-1. Download GLFW 3.4 for macOS from [GLFW's official website](https://www.glfw.org/download.html)
-2. Extract it to `dependencies/glfw-3.4.bin.MACOS/`
+1. Install the required libraries using Homebrew:
+```bash
+brew install glfw glew
+```
 
 ## Build
 
