@@ -76,3 +76,60 @@ glVertexAttribPointer(
   0 // Offset
 );
 ```
+
+### Compiling programs and shaders
+  
+  ```cpp
+// Create a program
+unsigned int programId = glCreateProgram();
+
+// create source code for the shaders
+
+std::string vertexShaderSource = R"glsl(
+  #version 330 core
+
+  layout(location = 0) in vec4 position;
+
+  void main() {
+    gl_Position = position;
+  }
+)glsl";
+
+std::string fragmentShaderSource = R"glsl(
+  #version 330 core
+
+  layout(location = 0) out vec4 color;
+
+  void main() {
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+  }
+)glsl";
+
+// Creating a shader
+unsigned int vertexShaderId = glCreateShader(GL_VERTEX_SHADER); // or GL_FRAGMENT_SHADER
+const char *src = vertexShaderSource.c_str();
+glShaderSource(vertexShaderId, 1, &src, NULL);
+glCompileShader(vertexShaderId);
+
+// ... same for fragment shader
+
+// attach shaders to the program
+glAttachShader(programId, vertexShaderId);
+glAttachShader(programId, fragmentShaderId);
+
+// link and validate the program
+glLinkProgram(programId);
+glValidateProgram(programId);
+
+// delete the shaders
+glDeleteShader(vs);
+glDeleteShader(fs);
+
+// use the program
+glUseProgram(programId);
+
+// ...frame loop
+
+//cleanup after the app is closed
+glDeleteProgram(programId);
+```
