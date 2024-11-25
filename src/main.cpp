@@ -1,6 +1,60 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+// read shader source and split into vertex and fragment
+struct ShaderProgamSource
+{
+  std::string VertexSource;
+  std::string FragmentSource;
+};
+
+static ShaderProgamSource ParseShader(const std::string &filepath)
+{
+  // load file
+  std::ifstream stream(filepath);
+
+  enum class ShaderType
+  {
+    NONE = -1,
+    VERTEX = 0,
+    FRAGMENT = 1
+  };
+  ShaderType type = ShaderType::NONE;
+
+  // create two stringtreams to store vertex and fragment shader
+  std::stringstream ss[2];
+
+  // read file line by line
+  std::string line;
+  while (getline(stream, line))
+  {
+    if (line.find("#shader") != std::string::npos)
+    {
+      // line is shader type declaration
+      if (line.find("vertex") != std::string::npos)
+      {
+        // set mode to vertex
+        type = ShaderType::VERTEX;
+      }
+      else if (line.find("fragment") != std::string::npos)
+      {
+        // set mode to vertex
+        type = ShaderType::FRAGMENT;
+      }
+    }
+    else
+    {
+      // line is normal shader code
+      ss[(int)type] << line << '\n';
+    }
+  }
+
+  return {ss[0].str(), ss[1].str()};
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string &source)
 {
@@ -9,6 +63,7 @@ static unsigned int CompileShader(unsigned int type, const std::string &source)
   glShaderSource(id, 1, &src, NULL);
   glCompileShader(id);
 
+  // check for errors
   int result;
   glGetShaderiv(id, GL_COMPILE_STATUS, &result);
   if (result == GL_FALSE)
@@ -101,27 +156,9 @@ int main(void)
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
   // create shaders
-  std::string vertexShaderSource = R"glsl(
-    #version 330 core
+  ShaderProgamSource source = ParseShader("src/res/shaders/Basic.shader");
 
-    layout(location = 0) in vec4 position;
-
-    void main() {
-      gl_Position = position;
-    }
-  )glsl";
-
-  std::string fragmentShaderSource = R"glsl(
-    #version 330 core
-
-    layout(location = 0) out vec4 color;
-
-    void main() {
-      color = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-  )glsl";
-
-  unsigned int shader = CreateShader(vertexShaderSource, fragmentShaderSource);
+  unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 
   glUseProgram(shader);
 

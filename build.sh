@@ -21,11 +21,12 @@ watch() {
     clear
     echo "Building..."
     build
-    echo "Built!"
+    echo "Built."
     echo "Watching for changes in src directory..."
     fswatch -o "${PWD}/src" | while read; do
         echo "Building..."
         build
+        echo "Built."
     done
 }
 
