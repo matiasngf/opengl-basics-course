@@ -173,9 +173,7 @@ int main(void)
 
   // create shaders
   ShaderProgamSource source = ParseShader("src/res/shaders/Basic.shader");
-
   unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-
   glUseProgram(shader);
 
   while (!glfwWindowShouldClose(window))
