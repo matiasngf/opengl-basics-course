@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Function to build
-build() {
+compile() {
     # Create build directory if it doesn't exist
     mkdir -p "${PWD}/build"
     
@@ -14,18 +13,27 @@ build() {
         -L/opt/homebrew/lib \
         -lglfw \
         -lGLEW
+
+}
+
+# Function to build
+build() {
+    clear
+    echo "Building..."
+    compile
+    echo "Built."
 }
 
 # Function to watch
 watch() {
     clear
     echo "Building..."
-    build
+    compile
     echo "Built."
     echo "Watching for changes in src directory..."
     fswatch -o "${PWD}/src" | while read; do
         echo "Building..."
-        build
+        compile
         echo "Built."
     done
 }
