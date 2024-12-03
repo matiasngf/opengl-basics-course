@@ -155,7 +155,11 @@ int main(void)
     return -1;
   }
 
+  // Make window's context current
   glfwMakeContextCurrent(window);
+
+  // match refresh rate with screen fps
+  glfwSwapInterval(1);
 
   if (glewInit() != GLEW_OK)
   {
@@ -208,11 +212,32 @@ int main(void)
   unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
   glUseProgram(shader);
 
+  // Where in memory
+  int uColorLocation = glGetUniformLocation(shader, "u_Color");
+  ASSERT(uColorLocation != -1);
+
+  float red = 0.0f;
+  float increment = 0.01f;
+
   while (!glfwWindowShouldClose(window))
   {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // udpate uniform
+    glUniform4f(uColorLocation, red, 1.f, 0.f, 1.f);
     // draw elements combines index buffer + vertex buffer
     GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+    if (red >= 1.f)
+    {
+      increment = -0.01f;
+    }
+    else if (red <= 0.f)
+    {
+      increment = 0.01f;
+    }
+
+    red += increment;
 
     glfwSwapBuffers(window);
     glfwPollEvents();
