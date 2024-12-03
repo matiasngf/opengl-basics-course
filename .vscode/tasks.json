@@ -5,13 +5,10 @@
       "label": "build",
       "type": "shell",
       "command": "${workspaceFolder}/build.sh",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
+      "group": "build",
       "problemMatcher": [
         "$gcc"
       ]
-    }
+    },
   ]
 }

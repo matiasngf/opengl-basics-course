@@ -4,6 +4,38 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cstdlib>
+
+// Handle GL errors
+
+#define ASSERT(x)                                   \
+  if (!(x))                                         \
+  {                                                 \
+    std::cerr << "Assertion failed: " << #x << "\n" \
+              << "File: " << __FILE__ << "\n"       \
+              << "Line: " << __LINE__ << "\n";      \
+    std::abort();                                   \
+  }
+#define GLCall(x) \
+  GLClearError(); \
+  x;              \
+  ASSERT(GLLogCall(#x))
+
+static void GLClearError()
+{
+  while (glGetError() != GL_NO_ERROR)
+    ;
+}
+
+static bool GLLogCall(const char *functionName)
+{
+  while (GLenum error = glGetError())
+  {
+    std::cout << "[OpenGL Error] (" << error << ") \nFunction: " << functionName << std::endl;
+    return false;
+  }
+  return true;
+}
 
 // read shader source and split into vertex and fragment
 struct ShaderProgamSource
@@ -179,9 +211,8 @@ int main(void)
   while (!glfwWindowShouldClose(window))
   {
     glClear(GL_COLOR_BUFFER_BIT);
-
     // draw elements combines index buffer + vertex buffer
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
     glfwSwapBuffers(window);
     glfwPollEvents();
