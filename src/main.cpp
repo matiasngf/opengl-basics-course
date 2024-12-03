@@ -172,12 +172,7 @@ int main(void)
   std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
   std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
-  unsigned int vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  // define a vertex buffer
-
+  // data for vertex buffer
   float positions[] = {
       -0.5f, -0.5f, // 0
       0.5f, -0.5f,  // 1
@@ -190,6 +185,11 @@ int main(void)
       2, 3, 0  // second triangle
   };
 
+  // vertex array object
+  unsigned int vao;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+
   // send vertex data to the GPU
   unsigned int buffer;
   glGenBuffers(1, &buffer);
@@ -197,8 +197,8 @@ int main(void)
   int verticesCount = 4;
   int vertexBufferSize = verticesCount * sizeof(float) * 2; // * 2 because x,y
   glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, positions, GL_STATIC_DRAW);
-
   glEnableVertexAttribArray(0);
+  // this function binds the buffer with the VAO
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
   // create index buffer

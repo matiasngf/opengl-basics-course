@@ -67,6 +67,7 @@ float positions[6] = {
 glEnableVertexAttribArray(0);
 
 // Tell OpenGL how to interpret the vertex data
+// Specify the layout of our data for each vertex attribute
 glVertexAttribPointer(
   0, // Index of the attribue (0 usually is vertex position)
   2, // Number of components (2 for x and y)
