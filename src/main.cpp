@@ -6,36 +6,9 @@
 #include <sstream>
 #include <cstdlib>
 
-// Handle GL errors
-
-#define ASSERT(x)                                   \
-  if (!(x))                                         \
-  {                                                 \
-    std::cerr << "Assertion failed: " << #x << "\n" \
-              << "File: " << __FILE__ << "\n"       \
-              << "Line: " << __LINE__ << "\n";      \
-    std::abort();                                   \
-  }
-#define GLCall(x) \
-  GLClearError(); \
-  x;              \
-  ASSERT(GLLogCall(#x))
-
-static void GLClearError()
-{
-  while (glGetError() != GL_NO_ERROR)
-    ;
-}
-
-static bool GLLogCall(const char *functionName)
-{
-  while (GLenum error = glGetError())
-  {
-    std::cout << "[OpenGL Error] (" << error << ") \nFunction: " << functionName << std::endl;
-    return false;
-  }
-  return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 // read shader source and split into vertex and fragment
 struct ShaderProgamSource
@@ -192,25 +165,26 @@ int main(void)
 
   // send vertex data to the GPU
   unsigned int buffer;
-  glGenBuffers(1, &buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
   int verticesCount = 4;
   int vertexBufferSize = verticesCount * sizeof(float) * 2; // * 2 because x,y
-  glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, positions, GL_STATIC_DRAW);
+
+  // Creates and binds our vertex buffer
+  VertexBuffer vb(positions, vertexBufferSize);
+
   glEnableVertexAttribArray(0);
   // this function binds the buffer with the VAO
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
   // create index buffer
+
+  IndexBuffer ib(indices, sizeof(indices));
+
   unsigned int ibo;
-  glGenBuffers(1, &ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
   // create shaders
   ShaderProgamSource source = ParseShader("src/res/shaders/Basic.shader");
   unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-  glUseProgram(shader);
 
   // Where in memory
   int uColorLocation = glGetUniformLocation(shader, "u_Color");
@@ -223,8 +197,13 @@ int main(void)
   {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // enable the shader
+    glUseProgram(shader);
     // udpate uniform
     glUniform4f(uColorLocation, red, 1.f, 0.f, 1.f);
+
+    // bind current index buffer
+    ib.Bind();
     // draw elements combines index buffer + vertex buffer
     GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 

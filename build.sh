@@ -3,10 +3,13 @@
 compile() {
     # Create build directory if it doesn't exist
     mkdir -p "${PWD}/build"
+
+    # Find all cpp files
+    CPP_FILES=$(find "${PWD}/src" -name "*.cpp")
     
     # Compile with system-installed libraries
     g++ -std=c++17 -g \
-        "${PWD}/src/main.cpp" \
+        ${CPP_FILES} \
         -o "${PWD}/build/program" \
         -framework OpenGL \
         -I/opt/homebrew/include \

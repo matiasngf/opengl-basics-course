@@ -135,6 +135,16 @@ glUseProgram(programId);
 glDeleteProgram(programId);
 ```
 
+## Index buffers usage
+
+Vertex buffer can contain large amount of data, for example the geometry for a spaceship.
+
+Lets say that we want to renden the body of the spaceship and the windows with different materails (programs). What we should do is bind the `vertex buffer` once.
+
+To render the ship I would enable the first program, with the first `index buffer` to render the body, then I would enable the second program, with the second `index buffer` to render the windows.
+
+So `index buffers` are a way to select the data we want to render next.
+
 # Vertex Array Objects
 
 VAO is a container for multiple buffers.
