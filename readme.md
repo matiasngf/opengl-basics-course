@@ -134,3 +134,30 @@ glUseProgram(programId);
 //cleanup after the app is closed
 glDeleteProgram(programId);
 ```
+
+# Vertex Array Objects
+
+VAO is a container for multiple buffers.
+
+```cpp
+// create a VAO
+// vertex array object
+unsigned int vao;
+glGenVertexArrays(1, &vao);
+glBindVertexArray(vao);
+
+
+// ...bind the buffer
+glBindBuffer(GL_ARRAY_BUFFER, buffer);
+// and enable the attribute
+glEnableVertexAttribArray(0);
+
+// This buffer is not binded to the VAO, to do that, we need to link them using glVertexAttribPointer
+glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+```
+
+Cleanup:
+
+```cpp
+glDeleteVertexArrays(1, &vao);
+```
