@@ -20,11 +20,11 @@ brew install glfw glew
 - Use `./build/program` or press `Ctrl+F5` to run the program.
 - Press `F5` to to run in debug mode.
 
-## Notes
+# Notes
 
 gl docs: https://docs.gl/
 
-### Creating vertex buffers
+## Creating vertex buffers
 
 ```cpp
 // Vertex data
@@ -50,7 +50,7 @@ Gl_STATIC_DRAW: CPU writes once, GPU reads frequently. (3D model loaded).
 
 GL_DYNAMIC_READ: GPU writes into buffer, GPU reads frequently. (Simulation, physics).
 
-### glVertexAttribPointer
+## glVertexAttribPointer
 
 It's used to tell OpenGL how to interpret the vertex data.
 This way we can have multiple attributes like position, UV, normals, etc.
@@ -78,9 +78,21 @@ glVertexAttribPointer(
 );
 ```
 
-### Compiling programs and shaders
-  
-  ```cpp
+## Vertex Buffers
+
+They are used to store the vertex data.
+
+```cpp
+// Create a vertex buffer
+unsigned int buffer;
+glGenBuffers(1, &buffer);
+glBindBuffer(GL_ARRAY_BUFFER, buffer);
+glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+```
+
+## Compiling programs and shaders
+
+```cpp
 // Create a program
 unsigned int programId = glCreateProgram();
 
