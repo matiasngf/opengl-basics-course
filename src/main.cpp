@@ -164,12 +164,9 @@ int main(void)
     // Create Vertex Array Object
     VertexArray va;
 
-    // Define our vertex buffer
-    unsigned int buffer;
+    // Creates and binds our vertex buffer
     int verticesCount = 4;
     int vertexBufferSize = verticesCount * sizeof(float) * 2; // * 2 because x,y
-
-    // Creates and binds our vertex buffer
     VertexBuffer vb(positions, vertexBufferSize);
 
     VertexBufferLayout layout; // define our layout
