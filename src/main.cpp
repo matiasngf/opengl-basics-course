@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 // read shader source and split into vertex and fragment
 struct ShaderProgamSource
@@ -160,28 +161,25 @@ int main(void)
         2, 3, 0  // second triangle
     };
 
-    // vertex array object
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    // Create Vertex Array Object
+    VertexArray va;
 
-    // send vertex data to the GPU
+    // Define our vertex buffer
     unsigned int buffer;
-
     int verticesCount = 4;
     int vertexBufferSize = verticesCount * sizeof(float) * 2; // * 2 because x,y
 
     // Creates and binds our vertex buffer
     VertexBuffer vb(positions, vertexBufferSize);
 
-    glEnableVertexAttribArray(0);
-    // this function binds the buffer with the VAO
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    VertexBufferLayout layout; // define our layout
+    layout.Push<float>(2);     // x,y floats for position
 
-    // create index buffer
+    // After the layout is defined, add the buffer with the layout to it.
+    va.AddBuffer(vb, layout);
 
+    // Create index buffer
     IndexBuffer ib(indices, sizeof(indices));
-
     unsigned int ibo;
 
     // create shaders
@@ -204,8 +202,9 @@ int main(void)
       // udpate uniform
       glUniform4f(uColorLocation, red, 1.f, 0.f, 1.f);
 
-      // bind current index buffer
-      ib.Bind();
+      va.Bind(); // What vertex data I want to draw
+      ib.Bind(); // What vertices do I want to draw
+
       // draw elements combines index buffer + vertex buffer
       GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 

@@ -24,7 +24,9 @@ brew install glfw glew
 
 gl docs: https://docs.gl/
 
-## Creating vertex buffers
+## Vertex buffers
+
+They are used to store the vertex data.
 
 ```cpp
 // Vertex data
@@ -50,7 +52,7 @@ Gl_STATIC_DRAW: CPU writes once, GPU reads frequently. (3D model loaded).
 
 GL_DYNAMIC_READ: GPU writes into buffer, GPU reads frequently. (Simulation, physics).
 
-## glVertexAttribPointer
+## Vertex Attributes (glVertexAttribPointer)
 
 It's used to tell OpenGL how to interpret the vertex data.
 This way we can have multiple attributes like position, UV, normals, etc.
@@ -78,16 +80,66 @@ glVertexAttribPointer(
 );
 ```
 
-## Vertex Buffers
+### Stride
 
-They are used to store the vertex data.
+The stride is the size of the data for each vertex. If a vertex a 2 floats for position and 2 floats for UVs, the stride is 4 floats.
+
+### Example with UVs
 
 ```cpp
-// Create a vertex buffer
+float positions[8] = {
+  -0.5f, -0.5f, 0.0f, 0.0f, // Vertex 1: (X, Y, U, V)
+  0.5f, -0.5f, 1.0f, 0.0f, // Vertex 2: (X, Y, U, V)
+  0.0f, 0.5f, 0.5f, 1.0f // Vertex 3: (X, Y, U, V)
+};
+
+// Enable the position vertex attribute
+glEnableVertexAttribArray(0);
+
+// Tell OpenGL how to interpret the position vertex data
+glVertexAttribPointer(
+  0, // Index of the attribue (0 usually is vertex position)
+  2, // Number of components (2 for x and y)
+  GL_FLOAT, // Type of the data
+  GL_FALSE, // Normalize the data
+  sizeof(float) * 4, // Stride (total size of each vertex)
+  0 // Offset (where the position data starts on each vertex)
+);
+
+// Enable the UV vertex attribute
+glEnableVertexAttribArray(1);
+
+// Tell OpenGL how to interpret the UV vertex data
+glVertexAttribPointer(
+  1, // Index of the attribue
+  2, // Number of components (2 for u and v)
+  GL_FLOAT, // Type of the data
+  GL_FALSE, // Normalize the data
+  sizeof(float) * 4, // Stride (total size of each vertex)
+  (const void*)(sizeof(float) * 2) // Offset (where the UV data starts on each vertex, in this case we need to skip the position data, wich is 2 floats)
+);
+```
+
+## Index Buffers
+
+They are used to store the index data. It will tell openGL what vertex to render next. It's also used to avoid redefining the same vertex multiple times. For example, a cube has 8 vertices, but it's made of 6 faces, so we can define the 8 vertices once and then use the index buffer to tell OpenGL which vertices to use for each face.
+
+We could also use index buffers to render one face of the cube with a different material.
+
+```cpp
 unsigned int buffer;
 glGenBuffers(1, &buffer);
-glBindBuffer(GL_ARRAY_BUFFER, buffer);
-glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+// ...create buffer
+
+// Create indices to draw a square
+unsigned int indices[6] = {
+  0, 1, 2,
+  2, 3, 4
+};
+
+// Create a index buffer
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 ```
 
 ## Compiling programs and shaders
